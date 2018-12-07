@@ -1,0 +1,122 @@
+<html>
+   <head>
+      <title>VueJs Instance</title>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.js"></script>
+      <script src = "https://unpkg.com/vue-router@3.0.1/dist/vue-router.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+
+   </head>
+ <body>
+      <div id="men"> 
+        {{log}}
+        <form  >
+          <p>if you want to add edit the name type name id</p>
+            <input v-model="id" placeholder="id" :disabled="!isEditing">
+             First Name:
+              <input v-model="firstn" :disabled="!isupdate"
+                     :class="{view: !isEditing}">
+            
+              Last Name:
+              <input v-model="lastn" :disabled="!isupdate"
+                     :class="{view: !isEditing}"> 
+
+            <input v-model="firstname"  placeholder="firstname" :disabled="isEditing">
+            <input v-model="lastname"  placeholder="lastname" :disabled="isEditing">
+            <button type="submit" v-on:click="sub">Submit</button>
+            <button type="submit" v-on:click="deleteuser">Delete</button>
+            <button type="submit" v-on:click="edituser">find user by id</button>
+            <button type="submit" v-on:click="updateuser">update existing user</button>
+            
+        </form>
+      </div>
+   </body>
+</html>
+<script>
+new Vue({
+  el: "#men",
+
+  data:{
+      id: "",
+      firstname: "",
+      lastname: "",
+      log: "",
+      isEditing: false,
+      isupdate:false,
+      firstn: "",
+      lastn: ""
+  },
+  
+  methods: {
+      
+      sub: function(event){
+          this.isEditing = false;
+          this.isupdate = false;
+          if(this.firstname == '' && this.lastname == '')
+          {
+              this.log = "Enter Name First";
+              event.preventDefault();
+          }else{
+            axios.post('http://localhost:3000/create', {
+              body: {firstname: this.firstname, lastname: this.lastname}
+            })
+            .then(response => {console.log(response)})
+            .catch(e => {
+              this.errors.push(e)
+            });
+          }
+           
+      },
+      deleteuser: function(event){
+            this.isEditing = false;
+            axios.post('http://localhost:3000/delete', {
+              body: {firstname: this.firstname, lastname: this.lastname}
+            })
+            .then(response => {this.log = response.data.response})
+            .catch(e => {
+              this.errors.push(e)
+            });
+           
+      },
+      edituser: function(event){
+            this.isEditing = true;
+            axios.post('http://localhost:3000/getuser', {
+              body: {id: this.id}
+            })
+            .then(response => {
+              if(response.data.response.firstname !== undefined){
+                this.isupdate = true
+                this.firstn = response.data.response.firstname
+                this.lastn = response.data.response.lastname
+              }else{
+                this.log = response.data.response
+              }
+
+            })
+            .catch(e => {
+              this.errors.push(e)
+            });           
+      },
+      updateuser: function(event){
+            axios.post('http://localhost:3000/update', {
+              body: {id: this.id, firstname: this.firstn, lastname: this.lastn}
+            })
+            .then(response => {
+              if(response.data.response.firstname !== undefined){
+               this.log = "User Successfully Updated"
+              }else{
+                this.log = response.data.response
+              }
+
+            })
+            .catch(e => {
+              this.errors.push(e)
+            });           
+      }
+  }
+  
+});
+
+
+</script>
+
+ <!-- <script type = "text/javascript" src="http://localhost/vue/js/vue_computeprops.js"></script> -->

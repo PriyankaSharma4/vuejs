@@ -1,0 +1,53 @@
+<html>
+   <head>
+      <title>VueJs Instance</title>
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.js"></script>
+      <script src = "https://unpkg.com/vue-router@3.0.1/dist/vue-router.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+
+   </head>
+ <body>
+      <div id = "computed_props">
+      <!--    FirstName : <input type = "text" v-model = "firstname" /> <br/><br/>
+         LastName : <input type = "text" v-model = "lastname"/> <br/><br/> -->
+         <div v-for = "a in info">
+            <p>Id = {{a.id}}</p>
+            <p>First Name = {{a.firstname}}</p>
+            <p>Last Name = {{a.lastname}}</p>
+
+         </div>
+      </div>
+   </body>
+</html>
+<script>
+//  const HTTP = axios.create({
+//   baseURL: 'http://localhost:3000',
+//   headers: {
+//     "Access-Control-Allow-Origin": "*",
+//     'Access-Control-Request-Headers' : 'Origin, X-Requested-With, Content-Type, Accept'
+//   }
+// })
+
+
+var vm = new Vue({
+   el: '#computed_props',
+    data () {
+    return {
+      info: null
+    }
+  },
+   mounted () {
+    axios
+      .get('http://localhost:3000/all')
+      .then(response => (
+         this.info = response.data.response)).catch(e => {
+         console.log("error"+e);
+      // this.errors.push(e)
+    })
+  }
+})
+
+
+</script>
+
+ <!-- <script type = "text/javascript" src="http://localhost/vue/js/vue_computeprops.js"></script> -->
